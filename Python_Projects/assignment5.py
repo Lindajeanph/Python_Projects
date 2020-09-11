@@ -6,77 +6,91 @@ import datetime
 import glob
 from datetime import timedelta
 import tkinter as tk
-destination = 'C:/Users/bposs/Documents/MonitoredFiles/'
-source = 'C:/Users/bposs/Documents/DailyFiles/'
-
-    #a list of files
-a = os.listdir(source)
-
-for i in a:
-    b = os.path.join(source, i)
-    c = datetime.datetime.now() - timedelta(hours=24)
-    d = os.path.getmtime(b)
-    e = datetime.datetime.fromtimestamp(d)
-    if e >= c:
-        shutil.move(b, destination)
-        print(i)
-
+from tkinter import filedialog
 from tkinter import *
-win = Tk()
-b1 = Button(win, text="Check files")
-b2 = Button(win, text="Copy Files")
-b3 = Button(win, text="Initiate")
-b1.pack(side=LEFT, padx = 20)
-b2.pack(side=LEFT, padx = 20)
-b3.pack(side=LEFT, padx = 20)
+import pathlib
 
-HEIGHT = 700
-WIDTH= 800
+def getsource(self):
+    ask = filedialog.askdirectory(title="Select a directory")
+    self.entrysource.delete(0, END)
+    self.entrysource.insert(END, ask)
 
-#check files
-def but1():
-    print(a)
-b1.configure(command=but1)
-    #Copy files
-def but2():
-    print(destination)
-b2.configure(command=but2)
+def getdestination(self):
+    retrieve = filedialog.askdirectory(title="Select the destination")
+    self.entrydestination.delete(0, END)
+    self.entrydestination.insert(END, retrieve)
+    
+    
+def go(self):
+    for i in a:
+        a = os.listdir(source)
+        b = os.path.join(source, i)
+        c = datetime.datetime.now() - timedelta(hours=24)
+        d = os.path.getmtime(b)
+        e = datetime.datetime.fromtimestamp(d)
+        if e >= c:
+            shutil.move(b, destination)
+            print(i)
 
-    #Initiate
-def but3():
-    print(i)
-b3.configure(command=but3)
+def loadgui(self):
+    #textbox label and button for source
+    self.entrysource = tk.Entry(font= 40)
+    self.entrysource.grid(row=0,column=2,rowspan=1,columnspan=1,padx=(30,40),pady=(40,0),sticky=N+W)
 
-
-root = tk.Tk()
-
-canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
-canvas.pack()
-
-frame = tk.Frame(root, bg='#cce6ff')
-frame.place(relx=0.1, rely= 0.1, relwidth=0.8, relheight=0.8)
-
-b1 = tk.Button(frame, text="Check files", command=but1)
-b1.pack(side='left', padx = 20)
-                   
-b2 = tk.Button(frame, text="Copy Files", command=but2)
-b2.pack(side='left', padx = 20)
-
-b3 = tk.Button(frame, text="Initiate", command=but3)
-b3.pack(side='left', padx = 20)
+    self.b1_label=tk.Label(self.master, text="Choose directory")
+    self.b1 = tk.Button(self.master, text="Choose directory", command=lambda:getsource(self))
+    self.b1.grid(row=0,column=1,padx=(5,0),pady=(40,0),sticky=W)
 
 
+    #textbox label button for destination
+    self.entrydest = tk.Entry(font= 40)
+    self.entrydest.grid(row=1,column=2,rowspan=1,columnspan=1,padx=(30,40),pady=(0,0),sticky=N+W)
+    self.b2_label=tk.Label(self.master, text="Destination directory")                  
+    self.b2 = tk.Button(self.master, text="Destination directory", command=lambda:getdestination(self))
+    self.b2.grid(row=1,column=1,padx=(5,0),pady=(5,0),sticky=W)
 
-label = tk.Label(lower_frame)
-label.place(relwidth=1, relheight=1)
-root.mainloop()
 
+    self.entrygo = tk.Entry(font=40)
+    self.b3 = tk.Button(self.master, text="Initiate", command=lambda:go(self))
+    self.b3.grid(row=2,column=1,padx=(5,0),pady=(5,0),sticky=W)
 
-root.mainloop()
+    self.b3.grid(row=3, column=3, padx=(10,0), pady=(20,0))
+    
+    
 
+class ParentWindow(Frame):
+   def __init__(self, master, *args, **kwargs):
+       Frame.__init__(self, master, *args, **kwargs)
 
+       #   define the master frame configuration
+       self.master = master
+       self.master.maxsize(800, 500)
+       self.master.minsize(800, 500)
+       self.master.title("Check for Files")
+       self.master.config(bg="#333")
+       self.master.protocol('WM_DELETE_WINDOW',
+                            lambda: FileCheck_func.quit_message(self))
 
        
+       #   Load in the GUI widgets from a separate module,
+       loadgui(self)
+    
+
+if __name__=="__main__":
+    root=tk.Tk()
+    app=ParentWindow(root)
+    root.mainloop()
+    
+
+    
+    
+
+
+
+
+
+    
+
     
 
 
